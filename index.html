@@ -354,24 +354,24 @@
             // Hide ruler if angle is 0 or 180
 
             if (Math.abs(angleDeg % 360) !== 0 && Math.abs(angleDeg % 360) !== 180) {
-                // Draw wide transparent ruler background for the green line
+                // Draw thinner green ruler background (borders 2x closer)
                 ctx.save();
                 ctx.globalAlpha = 0.18;
                 ctx.fillStyle = '#fff';
-                const rulerWidthG = 38;
+                const rulerWidthG = 18;
                 const rulerHeightG = Math.abs(y2 - y);
                 ctx.fillRect(x - rulerWidthG/2, Math.min(y, y2), rulerWidthG, rulerHeightG);
                 ctx.globalAlpha = 1;
-                ctx.lineWidth = 2;
+                ctx.lineWidth = 1.2;
                 ctx.strokeStyle = '#b2dfdb';
                 ctx.strokeRect(x - rulerWidthG/2, Math.min(y, y2), rulerWidthG, rulerHeightG);
                 ctx.restore();
-                // Draw green ruler line
+                // Draw thinner green ruler line
                 ctx.beginPath();
                 ctx.moveTo(x, y);
                 ctx.lineTo(x, y2);
                 ctx.strokeStyle = '#2ecc40';
-                ctx.lineWidth = 7;
+                ctx.lineWidth = 3.5;
                 ctx.stroke();
 
                 // Add numbers from 0 to 1 with 0.25 step to the green ruler
