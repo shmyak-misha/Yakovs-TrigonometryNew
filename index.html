@@ -583,13 +583,17 @@
             const dy = mouseY - center.y;
             let angle = Math.atan2(dy, dx) * 180 / Math.PI;
             if (angle < 0) angle += 360;
+            // Snap to 0 if angle is very close to 0 or 360
+            if (Math.abs(angle) < 1 || Math.abs(angle - 360) < 1) {
+                angle = 0;
+            }
             slider.value = angle;
             drawCircle(angle);
             updateDisplay((360 - angle) % 360);
         }
 
-        canvas.addEventListener('mousemove', handlePointerMove);
-        canvas.addEventListener('touchmove', handlePointerMove, { passive: false });
+        window.addEventListener('mousemove', handlePointerMove);
+        window.addEventListener('touchmove', handlePointerMove, { passive: false });
 
 
 
