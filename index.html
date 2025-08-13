@@ -193,7 +193,10 @@
                 ctx.font = '12px Arial';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'top';
-                ctx.fillText(t.toFixed(2), x1, y1 + gyDir * 18);
+                // Use correct quadrant check for negative sign
+                let labelValue = t.toFixed(2);
+                if (angleDeg >= 180 && angleDeg < 360) labelValue = '-' + labelValue;
+                ctx.fillText(labelValue, x1, y1 + gyDir * 18);
                 ctx.restore();
             }
             // Draw labels for radius and green line after all lines for visibility
@@ -478,7 +481,30 @@
             ctx.restore();
 
 
-            // ...existing code...
+            // Add this after isDragging declaration
+            let isNearRadius = false;
+
+            canvas.addEventListener('mousemove', (e) => {
+                if (isDragging) return; // Don't change cursor while dragging
+                const { center, radius } = getCenterAndRadius();
+                const { x: mouseX, y: mouseY } = getPointerPosition(e);
+                const angleRad = slider.value * Math.PI / 180;
+                const x = center.x + radius * Math.cos(angleRad);
+                const y = center.y + radius * Math.sin(angleRad);
+                const dist = Math.hypot(mouseX - x, mouseY - y);
+                if (dist < 20) {
+                    canvas.style.cursor = 'pointer';
+                    isNearRadius = true;
+                } else {
+                    canvas.style.cursor = '';
+                    isNearRadius = false;
+                }
+            });
+
+            canvas.addEventListener('mouseleave', () => {
+                isDragging = false;
+                canvas.style.cursor = '';
+            });
         }
 
         slider.addEventListener('input', (e) => {
@@ -518,6 +544,10 @@
             if (dist < 20) {
                 isDragging = true;
             }
+        });
+        canvas.addEventListener('mouseup', () => {
+            isDragging = false;
+            canvas.style.cursor = '';
         });
         canvas.addEventListener('mouseleave', () => {
             isDragging = false;
