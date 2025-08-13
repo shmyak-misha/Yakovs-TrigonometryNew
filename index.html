@@ -190,7 +190,7 @@
                 ctx.fill();
                 ctx.globalAlpha = 0.32;
                 ctx.fillStyle = '#2ecc40';
-                ctx.font = '12px Arial';
+                ctx.font = '9px Arial'; // 25% smaller
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'top';
                 // Use correct quadrant check for negative sign
@@ -377,13 +377,16 @@
                 // Add numbers from 0 to 1 with 0.25 step to the green ruler
                 ctx.save();
                 ctx.globalAlpha = 1;
-                ctx.font = 'bold 22px Arial';
+                ctx.font = 'bold 16.5px Arial'; // 25% smaller than 22px
                 ctx.fillStyle = '#2ecc40';
-                ctx.textAlign = 'left';
+                ctx.textAlign = 'right';
                 ctx.textBaseline = 'middle';
                 for (let t = 0; t <= 1.001; t += 0.25) {
                     let ty = (angleDeg >= 0 && angleDeg < 180) ? y - hangLength * t : y + hangLength * t;
-                    ctx.fillText(t.toFixed(2), x + rulerWidthG/2 + 8, ty);
+                    let label = t.toFixed(2);
+                    // Show negative sign only when radius is in quadrants 1 and 2 (angleDeg >= 0 && angleDeg < 180)
+                    if (angleDeg >= 0 && angleDeg < 180) label = '-' + label;
+                    ctx.fillText(label, x - rulerWidthG/2 - 8, ty);
                 }
                 ctx.restore();
             }
