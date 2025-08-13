@@ -540,10 +540,13 @@
             const dx = mouseX - center.x;
             const dy = mouseY - center.y;
             let angle = Math.atan2(dy, dx) * 180 / Math.PI;
-            if (angle < 0) angle += 360;
-            slider.value = angle;
-            drawCircle(angle);
-            updateDisplay((angle) % 360);
+            angle = (angle + 360) % 360; // normalize to [0, 360)
+            // The red radius follows the mouse (geometric angle)
+            // The displayed angle and slider match the CCW scale
+            let ccwAngle = (360 - angle) % 360;
+            slider.value = ccwAngle;
+            drawCircle(angle); // draw with geometric angle so radius follows mouse
+            updateDisplay(ccwAngle); // display CCW angle to match scale
         }
         canvas.addEventListener('mousemove', handlePointerMove);
         canvas.addEventListener('touchmove', handlePointerMove, { passive: false });
