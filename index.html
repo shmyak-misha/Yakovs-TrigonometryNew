@@ -50,6 +50,7 @@
                         // The angleDeg is the geometric angle from the positive X-axis (right), counterclockwise
                         // For display, use this directly
                         let displayAngle = Number(angleDeg).toFixed(2);
+                        // Use the CCW display angle directly for correct sin/cos
                         let rad = angleDeg * Math.PI / 180;
                         let sinVal = Math.sin(rad).toFixed(4);
                         let cosVal = Math.cos(rad).toFixed(4);
