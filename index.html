@@ -488,25 +488,11 @@
             let isNearRadius = false;
 
             canvas.addEventListener('mousemove', (e) => {
-                if (isDragging) return; // Don't change cursor while dragging
-                const { center, radius } = getCenterAndRadius();
-                const { x: mouseX, y: mouseY } = getPointerPosition(e);
-                const angleRad = slider.value * Math.PI / 180;
-                const x = center.x + radius * Math.cos(angleRad);
-                const y = center.y + radius * Math.sin(angleRad);
-                const dist = Math.hypot(mouseX - x, mouseY - y);
-                if (dist < 20) {
-                    canvas.style.cursor = 'pointer';
-                    isNearRadius = true;
-                } else {
-                    canvas.style.cursor = '';
-                    isNearRadius = false;
-                }
+                // No pointer changes
             });
 
             canvas.addEventListener('mouseleave', () => {
-                isDragging = false;
-                canvas.style.cursor = '';
+                // No pointer changes
             });
         }
 
@@ -537,6 +523,12 @@
             };
         }
 
+
+
+        // Use a single options object for touch events
+        const touchOptions = { passive: false };
+
+
         canvas.addEventListener('mousedown', (e) => {
             const { center, radius } = getCenterAndRadius();
             const { x: mouseX, y: mouseY } = getPointerPosition(e);
@@ -548,8 +540,22 @@
                 isDragging = true;
             }
         });
-        canvas.addEventListener('mouseup', () => {
-            isDragging = false;
+
+        // Change mouse pointer when near the draggable radius
+        canvas.addEventListener('mousemove', (e) => {
+            const { center, radius } = getCenterAndRadius();
+            const { x: mouseX, y: mouseY } = getPointerPosition(e);
+            const angleRad = slider.value * Math.PI / 180;
+            const x = center.x + radius * Math.cos(angleRad);
+            const y = center.y + radius * Math.sin(angleRad);
+            const dist = Math.hypot(mouseX - x, mouseY - y);
+            if (dist < 20) {
+                canvas.style.cursor = 'pointer';
+            } else {
+                canvas.style.cursor = '';
+            }
+        });
+        canvas.addEventListener('mouseleave', () => {
             canvas.style.cursor = '';
         });
         canvas.addEventListener('mouseleave', () => {
@@ -567,6 +573,7 @@
             }
         }, { passive: false });
 
+
         function handlePointerMove(e) {
             if (!isDragging) return;
             if (e.type.startsWith('touch')) e.preventDefault();
@@ -575,23 +582,22 @@
             const dx = mouseX - center.x;
             const dy = mouseY - center.y;
             let angle = Math.atan2(dy, dx) * 180 / Math.PI;
-            angle = (angle + 360) % 360; // normalize to [0, 360)
-            // The red radius follows the mouse (geometric angle)
-            // The displayed angle and slider match the CCW scale
-            let ccwAngle = (360 - angle) % 360;
-            slider.value = ccwAngle;
-            drawCircle(angle); // draw with geometric angle so radius follows mouse
-            updateDisplay(ccwAngle); // display CCW angle to match scale
+            if (angle < 0) angle += 360;
+            slider.value = angle;
+            drawCircle(angle);
+            updateDisplay((360 - angle) % 360);
         }
+
         canvas.addEventListener('mousemove', handlePointerMove);
         canvas.addEventListener('touchmove', handlePointerMove, { passive: false });
+
+
 
         function stopDragging() {
             isDragging = false;
         }
         window.addEventListener('mouseup', stopDragging);
         window.addEventListener('touchend', stopDragging);
-
         // Initial draw
         drawCircle(slider.value);
         updateDisplay(slider.value);
