@@ -46,21 +46,20 @@
             };
         }
                 function updateDisplay(angleDeg) {
-                        // Angle is measured according to the numbers on the circle (counterclockwise from the right)
-                        // The angleDeg is the geometric angle from the positive X-axis (right), counterclockwise
-                        // For display, use this directly
-                        let displayAngle = Number(angleDeg).toFixed(2);
-                        // Use the CCW display angle directly for correct sin/cos
-                        let rad = angleDeg * Math.PI / 180;
-                        let sinVal = Math.sin(rad).toFixed(4);
-                        let cosVal = Math.cos(rad).toFixed(4);
-                        document.getElementById('display').innerHTML = `
-                                <div style="display: flex; flex-direction: column; gap: 10px; color:#fff; font-size:1.1em;">
-                                    <div><b>Angle (°):</b> ${displayAngle}</div>
-                                    <div><b>sin:</b> ${sinVal}</div>
-                                    <div><b>cos:</b> ${cosVal}</div>
-                                </div>
-                        `;
+            // Angle is measured according to the numbers on the circle (counterclockwise from the right)
+            // The angleDeg is the geometric angle from the positive X-axis (right), counterclockwise
+            // For display, use this directly
+            let displayAngle = Number(angleDeg).toFixed(2);
+            let rad = angleDeg * Math.PI / 180;
+            let sinVal = Math.sin(rad).toFixed(4);
+            let cosVal = Math.cos(rad).toFixed(4);
+            document.getElementById('display').innerHTML = `
+                <div style="display: flex; flex-direction: column; gap: 10px; color:#fff; font-size:1.1em;">
+                    <div><b>Angle (°):</b> ${displayAngle}</div>
+                    <div><b>sin:</b> ${sinVal}</div>
+                    <div><b>cos:</b> ${cosVal}</div>
+                </div>
+            `;
         }
 
         function drawCircle(angleDeg) {
@@ -483,9 +482,11 @@
         }
 
         slider.addEventListener('input', (e) => {
-            const angle = Number(e.target.value);
-            drawCircle(angle);
-            updateDisplay(angle);
+            // When slider increases, move radius counterclockwise
+            const ccwAngle = Number(e.target.value);
+            const angle = (360 - ccwAngle) % 360;
+            drawCircle(angle); // draw with geometric angle so radius follows slider
+            updateDisplay(ccwAngle); // display CCW angle to match scale
         });
 
         // Mouse and touch interaction for dragging the radius
