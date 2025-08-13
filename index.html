@@ -543,7 +543,7 @@
             if (angle < 0) angle += 360;
             slider.value = angle;
             drawCircle(angle);
-            updateDisplay((360 - angle) % 360);
+            updateDisplay((angle) % 360);
         }
         canvas.addEventListener('mousemove', handlePointerMove);
         canvas.addEventListener('touchmove', handlePointerMove, { passive: false });
