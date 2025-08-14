@@ -363,7 +363,6 @@
                 y2 = Math.min(y + hangLength, center.y);
             }
             // Hide ruler if angle is 0 or 180
-
             if (Math.abs(angleDeg % 360) !== 0 && Math.abs(angleDeg % 360) !== 180) {
                 // Draw thinner green ruler background (borders 2x closer)
                 ctx.save();
@@ -463,23 +462,23 @@
                 }
                 // Major tick
                 ctx.save();
-                ctx.globalAlpha = 0.35;
+                ctx.globalAlpha = 0.7; // slightly less bold
                 ctx.beginPath();
-                ctx.moveTo(center.x + t * radius, y - 12);
-                ctx.lineTo(center.x + t * radius, y + 12);
-                ctx.strokeStyle = '#d7263d';
-                ctx.lineWidth = 2;
+                ctx.moveTo(center.x + t * radius, y - 16); // longer tick
+                ctx.lineTo(center.x + t * radius, y + 16); // longer tick
+                ctx.strokeStyle = '#3366aa'; // lighter blue for less bold
+                ctx.lineWidth = 2.2; // slightly thinner
                 ctx.stroke();
                 ctx.restore();
                 // Label
                 ctx.save();
-                ctx.globalAlpha = 0.5;
-                ctx.fillStyle = '#fff';
+                ctx.globalAlpha = 0.18; // more transparent background
+                ctx.fillStyle = '#cce6ff'; // blueish background for contrast
                 ctx.beginPath();
                 ctx.arc(x, y + 18, 9, 0, 2 * Math.PI);
                 ctx.fill();
-                ctx.globalAlpha = 0.7;
-                ctx.fillStyle = '#d7263d';
+                ctx.globalAlpha = 1; // fully opaque for text
+                ctx.fillStyle = '#0057b7'; // blue for markings
                 ctx.font = `${Math.round(canvasFont * 0.8)}px Arial`;
                 ctx.fillText(label, x, y + 18);
                 ctx.restore();
@@ -490,11 +489,11 @@
                         if (pos > 1) break;
                         const mx = center.x + pos * radius;
                         ctx.save();
-                        ctx.globalAlpha = 0.22;
+                        ctx.globalAlpha = 0.7; // less transparent
                         ctx.beginPath();
                         ctx.moveTo(mx, y - 7);
                         ctx.lineTo(mx, y + 7);
-                        ctx.strokeStyle = '#d7263d';
+                        ctx.strokeStyle = '#0057b7'; // blue for minor tick
                         ctx.lineWidth = 1;
                         ctx.stroke();
                         ctx.restore();
