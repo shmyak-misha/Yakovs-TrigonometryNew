@@ -67,6 +67,11 @@
             // Clear canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+            // Scale factors
+            const fontScale = canvas.width / 400; // 1 for 400px, <1 for smaller
+            const tickScale = canvas.width / 400;
+            const dragHotspot = Math.max(12, Math.round(canvas.width * 0.045));
+
             // Draw white background circle 20% smaller than main circle
             ctx.beginPath();
             ctx.arc(center.x, center.y, radius * 0.8, 0, 2 * Math.PI);
@@ -74,9 +79,8 @@
             ctx.globalAlpha = 1;
             ctx.fill();
 
-
             // Draw wide transparent red ruler background for the radius
-            const rulerWidth = 38;
+            const rulerWidth = 38 * tickScale;
             const rulerLength = radius;
             const angleRadRuler = angleDeg * Math.PI / 180;
             ctx.save();
@@ -86,7 +90,7 @@
             ctx.rotate(angleRadRuler);
             ctx.fillRect(0, -rulerWidth/2, rulerLength, rulerWidth);
             ctx.globalAlpha = 1;
-            ctx.lineWidth = 3;
+            ctx.lineWidth = 3 * tickScale;
             ctx.strokeStyle = '#d7263d';
             ctx.strokeRect(0, -rulerWidth/2, rulerLength, rulerWidth);
             ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -96,7 +100,7 @@
             ctx.save();
             ctx.translate(center.x, center.y);
             ctx.rotate(angleRadRuler);
-            ctx.font = 'bold 20px Arial';
+            ctx.font = `bold ${Math.round(20 * fontScale)}px Arial`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             for (let t = 0; t <= 1.001; t += 0.25) {
@@ -105,7 +109,7 @@
                 ctx.moveTo(rulerLength * t, -rulerWidth/2);
                 ctx.lineTo(rulerLength * t, rulerWidth/2);
                 ctx.strokeStyle = '#d7263d';
-                ctx.lineWidth = 4;
+                ctx.lineWidth = 4 * tickScale;
                 ctx.stroke();
                 // Minor tick every 0.05 (except at 0, 0.25, 0.5, 0.75, 1)
                 if (t < 1) {
@@ -116,7 +120,7 @@
                         ctx.moveTo(rulerLength * pos, -rulerWidth/4);
                         ctx.lineTo(rulerLength * pos, rulerWidth/4);
                         ctx.strokeStyle = '#d7263d';
-                        ctx.lineWidth = 2;
+                        ctx.lineWidth = 2 * tickScale;
                         ctx.stroke();
                     }
                 }
@@ -126,11 +130,12 @@
                     ctx.globalAlpha = 0.9;
                     ctx.fillStyle = '#fff';
                     ctx.beginPath();
-                    ctx.arc(rulerLength * t, -rulerWidth/2 + 18, 15, 0, 2 * Math.PI);
+                    ctx.arc(rulerLength * t, -rulerWidth/2 + 18 * tickScale, 15 * tickScale, 0, 2 * Math.PI);
                     ctx.fill();
                     ctx.globalAlpha = 1;
                     ctx.fillStyle = '#d7263d';
-                    ctx.fillText(t.toFixed(2), rulerLength * t, -rulerWidth/2 + 18);
+                    ctx.font = `bold ${Math.round(20 * fontScale)}px Arial`;
+                    ctx.fillText(t.toFixed(2), rulerLength * t, -rulerWidth/2 + 18 * tickScale);
                     ctx.restore();
                 }
             }
@@ -551,7 +556,7 @@
             const x = center.x + radius * Math.cos(angleRad);
             const y = center.y + radius * Math.sin(angleRad);
             const dist = Math.hypot(mouseX - x, mouseY - y);
-            if (dist < 20) {
+            if (dist < dragHotspot) {
                 isDragging = true;
             }
         });
@@ -566,7 +571,7 @@
             const x = center.x + radius * Math.cos(angleRad);
             const y = center.y + radius * Math.sin(angleRad);
             const dist = Math.hypot(mouseX - x, mouseY - y);
-            if (dist < 20) {
+            if (dist < dragHotspot) {
                 canvas.style.cursor = 'pointer';
             } else {
                 canvas.style.cursor = '';
@@ -587,7 +592,7 @@
             const x = center.x + radius * Math.cos(angleRad);
             const y = center.y + radius * Math.sin(angleRad);
             const dist = Math.hypot(mouseX - x, mouseY - y);
-            if (dist < 30) {
+            if (dist < dragHotspot * 1.5) {
                 isDragging = true;
             }
         }, { passive: false });
