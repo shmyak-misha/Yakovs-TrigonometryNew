@@ -345,11 +345,14 @@
 
             // Draw green vertical line at end of radius
             const hangLength = radius;
+            // Draw only the part of the green line from the intersection point to the horizontal diameter (center.y)
             let y2;
             if (angleDeg >= 0 && angleDeg < 180) {
-                y2 = y - hangLength;
+                // Above center: draw down to center.y only
+                y2 = Math.max(y - hangLength, center.y);
             } else {
-                y2 = y + hangLength;
+                // Below center: draw up to center.y only
+                y2 = Math.min(y + hangLength, center.y);
             }
             // Hide ruler if angle is 0 or 180
 
@@ -374,17 +377,25 @@
                 ctx.lineWidth = 3.5;
                 ctx.stroke();
 
-                // Add numbers from 0 to 1 with 0.25 step to the green ruler
+                // Add numbers from 0 to 1 with 0.25 step to the green ruler (only on visible part)
                 ctx.save();
                 ctx.globalAlpha = 1;
                 ctx.font = 'bold 16.5px Arial'; // 25% smaller than 22px
                 ctx.fillStyle = '#2ecc40';
                 ctx.textAlign = 'right';
                 ctx.textBaseline = 'middle';
-                for (let t = 0; t <= 1.001; t += 0.25) {
+                // Only show labels on the visible part
+                let tStart = 0, tEnd = 1;
+                if (angleDeg >= 0 && angleDeg < 180) {
+                    // Only show labels from y to center.y
+                    tEnd = (y - center.y) / hangLength;
+                } else {
+                    tEnd = (center.y - y) / hangLength;
+                }
+                tEnd = Math.max(0, Math.min(1, tEnd));
+                for (let t = 0; t <= tEnd + 0.001; t += 0.25) {
                     let ty = (angleDeg >= 0 && angleDeg < 180) ? y - hangLength * t : y + hangLength * t;
                     let label = t.toFixed(2);
-                    // Show negative sign only when radius is in quadrants 1 and 2 (angleDeg >= 0 && angleDeg < 180)
                     if (angleDeg >= 0 && angleDeg < 180) label = '-' + label;
                     ctx.fillText(label, x - rulerWidthG/2 - 8, ty);
                 }
