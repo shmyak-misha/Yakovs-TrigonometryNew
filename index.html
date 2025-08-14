@@ -509,6 +509,7 @@
 
         slider.addEventListener('input', (e) => {
             // When slider increases, move radius counterclockwise
+            isDragging = false; // Always reset drag state when using slider
             const ccwAngle = Number(e.target.value);
             const angle = (360 - ccwAngle) % 360;
             drawCircle(angle); // draw with geometric angle so radius follows slider
@@ -540,10 +541,13 @@
         const touchOptions = { passive: false };
 
 
+
         canvas.addEventListener('mousedown', (e) => {
             const { center, radius } = getCenterAndRadius();
             const { x: mouseX, y: mouseY } = getPointerPosition(e);
-            const angleRad = slider.value * Math.PI / 180;
+            // Convert slider value (counterclockwise) to geometric angle (clockwise)
+            const angleDeg = (360 - Number(slider.value)) % 360;
+            const angleRad = angleDeg * Math.PI / 180;
             const x = center.x + radius * Math.cos(angleRad);
             const y = center.y + radius * Math.sin(angleRad);
             const dist = Math.hypot(mouseX - x, mouseY - y);
@@ -556,7 +560,9 @@
         canvas.addEventListener('mousemove', (e) => {
             const { center, radius } = getCenterAndRadius();
             const { x: mouseX, y: mouseY } = getPointerPosition(e);
-            const angleRad = slider.value * Math.PI / 180;
+            // Convert slider value (counterclockwise) to geometric angle (clockwise)
+            const angleDeg = (360 - Number(slider.value)) % 360;
+            const angleRad = angleDeg * Math.PI / 180;
             const x = center.x + radius * Math.cos(angleRad);
             const y = center.y + radius * Math.sin(angleRad);
             const dist = Math.hypot(mouseX - x, mouseY - y);
@@ -575,7 +581,9 @@
         canvas.addEventListener('touchstart', (e) => {
             const { center, radius } = getCenterAndRadius();
             const { x: mouseX, y: mouseY } = getPointerPosition(e);
-            const angleRad = slider.value * Math.PI / 180;
+            // Convert slider value (counterclockwise) to geometric angle (clockwise)
+            const angleDeg = (360 - Number(slider.value)) % 360;
+            const angleRad = angleDeg * Math.PI / 180;
             const x = center.x + radius * Math.cos(angleRad);
             const y = center.y + radius * Math.sin(angleRad);
             const dist = Math.hypot(mouseX - x, mouseY - y);
@@ -598,9 +606,11 @@
             if (Math.abs(angle) < 1 || Math.abs(angle - 360) < 1) {
                 angle = 0;
             }
-            slider.value = angle;
+            // Set slider to counterclockwise value to match slider logic
+            let ccwAngle = (360 - angle) % 360;
+            slider.value = ccwAngle;
             drawCircle(angle);
-            updateDisplay((360 - angle) % 360);
+            updateDisplay(ccwAngle);
         }
 
         window.addEventListener('mousemove', handlePointerMove);
