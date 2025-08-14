@@ -505,7 +505,7 @@
 
             // === DRAW GREEN VERTICAL RULER TICKS LAST FOR VISIBILITY ===
             if (Math.abs(angleDeg % 360) !== 0 && Math.abs(angleDeg % 360) !== 180) {
-                // Draw major and minor ticks at the same positions as the green number labels
+                // Draw major and minor ticks only between the intersection and the horizontal diameter
                 const angleRad = angleDeg * Math.PI / 180;
                 const gx = center.x + radius * Math.cos(angleRad);
                 const gy = center.y + radius * Math.sin(angleRad);
@@ -514,6 +514,8 @@
                 for (let i = 1; i < 4; i++) {
                     let t = i / 4;
                     let tickY = gy + gyDir * radius * t;
+                    // Only draw ticks strictly between gy and center.y
+                    if ((gyDir === -1 && (tickY > gy || tickY < center.y)) || (gyDir === 1 && (tickY < gy || tickY > center.y))) continue;
                     ctx.save();
                     ctx.globalAlpha = 0.7;
                     ctx.beginPath();
@@ -532,8 +534,10 @@
                         let t = i / 4 + s;
                         if (t >= 1) break;
                         let tickY = gy + gyDir * radius * t;
+                        // Only draw ticks strictly between gy and center.y
+                        if ((gyDir === -1 && (tickY > gy || tickY < center.y)) || (gyDir === 1 && (tickY < gy || tickY > center.y))) continue;
                         ctx.save();
-                        ctx.globalAlpha = 0.7; // less transparent
+                        ctx.globalAlpha = 0.7;
                         ctx.beginPath();
                         ctx.moveTo(gx - 6, tickY);
                         ctx.lineTo(gx + 6, tickY);
