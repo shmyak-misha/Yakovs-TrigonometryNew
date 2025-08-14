@@ -64,6 +64,11 @@
 
         function drawCircle(angleDeg) {
             const { center, radius } = getCenterAndRadius();
+            // Responsive font size for canvas labels
+            let canvasFont = 20;
+            if (canvas.width < 350) canvasFont = 12;
+            else if (canvas.width < 500) canvasFont = 16;
+
             // Clear canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -96,7 +101,7 @@
             ctx.save();
             ctx.translate(center.x, center.y);
             ctx.rotate(angleRadRuler);
-            ctx.font = 'bold 20px Arial';
+            ctx.font = `bold ${canvasFont}px Arial`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             for (let t = 0; t <= 1.001; t += 0.25) {
@@ -130,6 +135,7 @@
                     ctx.fill();
                     ctx.globalAlpha = 1;
                     ctx.fillStyle = '#d7263d';
+                    ctx.font = `bold ${canvasFont}px Arial`;
                     ctx.fillText(t.toFixed(2), rulerLength * t, -rulerWidth/2 + 18);
                     ctx.restore();
                 }
@@ -190,7 +196,7 @@
                 ctx.fill();
                 ctx.globalAlpha = 0.32;
                 ctx.fillStyle = '#2ecc40';
-                ctx.font = '9px Arial'; // 25% smaller
+                ctx.font = `${Math.round(canvasFont * 0.45)}px Arial`;
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'top';
                 // Use correct quadrant check for negative sign
@@ -200,7 +206,7 @@
                 ctx.restore();
             }
             // Draw labels for radius and green line after all lines for visibility
-            ctx.font = 'bold 36px Arial';
+            ctx.font = `bold ${Math.round(canvasFont * 1.8)}px Arial`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             radiusLabels.forEach(lbl => {
@@ -213,6 +219,7 @@
                 ctx.fill();
                 ctx.globalAlpha = 1;
                 ctx.fillStyle = lbl.color;
+                ctx.font = `bold ${Math.round(canvasFont * 1.8)}px Arial`;
                 ctx.fillText(lbl.text, lbl.x, lbl.y);
                 ctx.restore();
             });
@@ -225,6 +232,7 @@
                 ctx.fill();
                 ctx.globalAlpha = 1;
                 ctx.fillStyle = lbl.color;
+                ctx.font = `bold ${Math.round(canvasFont * 1.8)}px Arial`;
                 ctx.fillText(lbl.text, lbl.x, lbl.y);
                 ctx.restore();
             });
@@ -315,7 +323,7 @@
                 ctx.lineWidth = tickWidth;
                 ctx.stroke();
             }
-            ctx.font = 'bold 22px Arial';
+            ctx.font = `bold ${Math.round(canvasFont * 1.1)}px Arial`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             for (let deg = 0; deg < 360; deg += 10) {
@@ -380,7 +388,7 @@
                 // Add numbers from 0 to 1 with 0.25 step to the green ruler (only on visible part)
                 ctx.save();
                 ctx.globalAlpha = 1;
-                ctx.font = 'bold 16.5px Arial'; // 25% smaller than 22px
+                ctx.font = `bold ${Math.round(canvasFont * 0.8)}px Arial`;
                 ctx.fillStyle = '#2ecc40';
                 ctx.textAlign = 'right';
                 ctx.textBaseline = 'middle';
@@ -403,7 +411,7 @@
             }
 
             // Draw quadrant labels
-            ctx.font = 'bold 36px Arial';
+            ctx.font = `bold ${Math.round(canvasFont * 1.8)}px Arial`;
             ctx.fillStyle = '#111';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
@@ -437,7 +445,7 @@
 
             // Draw ruler-like markings on the diameter (horizontal line)
             ctx.save();
-            ctx.font = '16px Arial';
+            ctx.font = `${Math.round(canvasFont * 0.8)}px Arial`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'top';
             for (let t = -1; t <= 1.001; t += 0.25) {
@@ -472,6 +480,7 @@
                 ctx.fill();
                 ctx.globalAlpha = 0.7;
                 ctx.fillStyle = '#d7263d';
+                ctx.font = `${Math.round(canvasFont * 0.8)}px Arial`;
                 ctx.fillText(label, x, y + 18);
                 ctx.restore();
                 // Minor ticks between major
@@ -529,9 +538,12 @@
                 clientX = e.clientX;
                 clientY = e.clientY;
             }
+            // Adjust for canvas scaling (important for high-DPI and resized canvases)
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
             return {
-                x: clientX - rect.left,
-                y: clientY - rect.top
+                x: (clientX - rect.left) * scaleX,
+                y: (clientY - rect.top) * scaleY
             };
         }
 
