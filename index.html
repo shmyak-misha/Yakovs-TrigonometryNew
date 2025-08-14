@@ -73,12 +73,14 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             // Draw white background circle 20% smaller than main circle
+            ctx.save();
+            ctx.globalAlpha = 0.07; // more transparent for inner blue circle
             ctx.beginPath();
             ctx.arc(center.x, center.y, radius * 0.8, 0, 2 * Math.PI);
-            ctx.fillStyle = '#fff';
-            ctx.globalAlpha = 1;
+            ctx.fillStyle = '#0057b7';
             ctx.fill();
-
+            ctx.globalAlpha = 1;
+            ctx.restore();
 
             // Draw wide transparent red ruler background for the radius
             const rulerWidth = 38;
@@ -277,11 +279,15 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             // Draw main circle
+            ctx.save();
+            ctx.globalAlpha = 0.07; // even more transparent
             ctx.beginPath();
             ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI);
             ctx.strokeStyle = '#0057b7';
             ctx.lineWidth = 8;
             ctx.stroke();
+            ctx.globalAlpha = 1;
+            ctx.restore();
 
             // Draw axes
             ctx.beginPath();
@@ -327,9 +333,7 @@
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             for (let deg = 0; deg < 360; deg += 10) {
-                // Counterclockwise: invert angle direction, offset 0 so 0 is top, 90 left, 180 bottom, 270 right
                 const rad = (-deg) * Math.PI / 180;
-                // Place numbers just outside the blue circle, shifted right by same offset as center.x
                 const sx = center.x + (radius + 24) * Math.cos(rad);
                 const sy = center.y + (radius + 24) * Math.sin(rad);
                 ctx.lineWidth = 4;
@@ -380,7 +384,7 @@
                 ctx.beginPath();
                 ctx.moveTo(x, y);
                 ctx.lineTo(x, y2);
-                ctx.strokeStyle = '#2ecc40';
+                ctx.strokeStyle = '#009900'; // strong dark green
                 ctx.lineWidth = 3.5;
                 ctx.stroke();
 
@@ -388,9 +392,11 @@
                 ctx.save();
                 ctx.globalAlpha = 1;
                 ctx.font = `bold ${Math.round(canvasFont * 0.8)}px Arial`;
-                ctx.fillStyle = '#2ecc40';
+                ctx.fillStyle = '#009900'; // match the green line color
                 ctx.textAlign = 'right';
                 ctx.textBaseline = 'middle';
+                ctx.shadowColor = '#fff'; // white shadow for extra clarity
+                ctx.shadowBlur = 2;
                 // Only show labels on the visible part
                 let tStart = 0, tEnd = 1;
                 if (angleDeg >= 0 && angleDeg < 180) {
@@ -521,10 +527,10 @@
                     ctx.beginPath();
                     ctx.moveTo(gx - 10, tickY);
                     ctx.lineTo(gx + 10, tickY);
-                    ctx.strokeStyle = '#2ecc40';
+                    ctx.strokeStyle = '#009900'; // strong dark green
                     ctx.lineWidth = 1.6;
-                    ctx.shadowColor = 'transparent';
-                    ctx.shadowBlur = 0;
+                    ctx.shadowColor = '#fff'; // white shadow for extra clarity
+                    ctx.shadowBlur = 2;
                     ctx.stroke();
                     ctx.restore();
                 }
@@ -541,10 +547,10 @@
                         ctx.beginPath();
                         ctx.moveTo(gx - 6, tickY);
                         ctx.lineTo(gx + 6, tickY);
-                        ctx.strokeStyle = '#2ecc40';
+                        ctx.strokeStyle = '#009900'; // strong dark green
                         ctx.lineWidth = 1;
-                        ctx.shadowColor = 'transparent';
-                        ctx.shadowBlur = 0;
+                        ctx.shadowColor = '#fff';
+                        ctx.shadowBlur = 2;
                         ctx.stroke();
                         ctx.restore();
                     }
