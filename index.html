@@ -447,6 +447,41 @@
             ctx.lineWidth = 2;
             ctx.stroke();
 
+            // Draw angle arc near the origin (counterclockwise)
+            const arcRadius = radius * 0.22;
+            // Use the geometric angle (angleDeg) for the arc, draw in the same direction as the red radius (clockwise)
+            let angleRadArc = angleDeg * Math.PI / 180;
+            if (angleRadArc < 0) angleRadArc += 2 * Math.PI;
+            if (Math.abs(angleRadArc) > 0.03) { // Only draw if angle is not too small
+                ctx.save();
+                ctx.beginPath();
+                // Draw arc from 0 to angleRadArc, in the clockwise direction (anticlockwise=true)
+                ctx.arc(center.x, center.y, arcRadius, 0, angleRadArc, true);
+                ctx.strokeStyle = '#003399'; // dark blue
+                ctx.lineWidth = 2.5;
+                ctx.globalAlpha = 0.5;
+                ctx.stroke();
+                ctx.restore();
+                // Draw θ (theta) label always in the same place as in quarter 1
+                ctx.save();
+                ctx.font = `bold ${Math.round(canvasFont * 1.1)}px Arial`;
+                ctx.fillStyle = '#003399'; // dark blue
+                ctx.globalAlpha = 0.5;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                // Place θ at a fixed angle (315°) and fixed radius from the origin, shifted down and right
+                let thetaAngle = 315 * Math.PI / 180; // 315 degrees in radians
+                let thetaRadius = arcRadius * 1.35;
+                let thetaX = center.x + thetaRadius * Math.cos(thetaAngle) + canvasFont * 1.1;
+                let thetaX_shifted = center.x + thetaRadius * Math.cos(thetaAngle) + canvasFont * 2.2;
+                let thetaX_shifted_more = center.x + thetaRadius * Math.cos(thetaAngle) + canvasFont * 3.2;
+                let thetaY = center.y + thetaRadius * Math.sin(thetaAngle) + canvasFont * 0.7;
+                // Show θ = value
+                let thetaValue = Number(slider.value).toFixed(2) + '°';
+                ctx.fillText('θ = ' + thetaValue, thetaX_shifted_more, thetaY);
+                ctx.restore();
+            }
+
 
             // Draw ruler-like markings on the diameter (horizontal line)
             ctx.save();
